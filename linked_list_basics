@@ -1,0 +1,171 @@
+#include<iostream>
+using namespace std;
+
+typedef struct Node {
+	int data;
+	struct Node *next;
+} List;
+
+List *head;
+
+List *createNewItem(int data) {
+	List *newItem = new List();
+	newItem->data = data;
+	newItem->next = NULL;
+	return newItem;
+}
+
+List *init() {
+	return createNewItem(-1);
+}
+
+// test after break!
+void deleteAny(List *root, int data) {
+	List *cur = root;
+	while (cur->next && cur->next->data != data) {
+		cur = cur->next;
+	}
+	if (cur->next == nullptr) {
+		cout << "data: " << data << ", not found, delete failed, exiting.\n";
+		return;
+	}
+	List *temp = cur->next->next;
+	delete cur->next;
+	cur->next = temp;
+	cout << "\nSuccess !! Deleted data = " << data << endl;
+}
+
+void deleteLast(List *root) {
+	List *cur = root;
+	while(cur->next && cur->next->next){
+		cur = cur->next;
+	}
+
+	if (!cur->next) {
+		cout << "delete last not possible" << endl;
+		return;
+	}
+	
+	List *temp = cur->next;
+	cur->next = cur->next->next;
+	delete temp;
+	cout << "\nSuccess !! Deleted last.\n";
+}
+
+void deleteFirst(List *root) {
+	List *cur = root;
+	if (cur->next == nullptr) {
+		cout << "delete not possible" << endl;
+		return;
+	}
+	List *temp = cur->next->next;
+	delete cur->next;
+	cur->next = temp;
+	cout << "\nSuccess !! Deleted first.\n";
+}
+
+void insertLast(List *root, int data) {
+	List *cur = root;
+	while (cur->next != nullptr) {
+		cur = cur->next;
+	}
+	cur->next = createNewItem(data);
+}
+void insertFirst(List *root, int data) {
+	if (root->next == nullptr) {
+		root->next = createNewItem(data);
+	}
+	else {
+		List *temp = root->next;
+		List *newNode = createNewItem(data);
+		root->next = newNode;
+		newNode->next = temp;
+	}
+}
+void insertAny(List *root, int data, int position) {
+	List *cur = root;
+	while (cur->next && position > 1) {
+		cur = cur->next;
+		position--;
+	}
+	if (!cur->next && position > 1) {
+		cout << "insert not possible\n";
+		return;
+	}
+	List *newNode = createNewItem(data);
+	List *temp = cur->next;
+	cur->next = newNode;
+	newNode->next = temp;
+}
+
+void print(List *root) {
+	cout << "\nPrint linked list.\n";
+	if (!root->next) {
+		printf("Linked list is empty. Exiting...");
+		return;
+	}
+	cout << "[Current Linked list]:\n";
+	List *cur = root;
+	while (cur->next != nullptr) {
+		cur = cur->next;
+		printf("%d ", cur->data);
+	}
+	cout << endl;
+}
+
+int main() {
+	int key;
+	int item;
+	List *root = init();
+	for (;;) {
+		printf("\n===================\n");
+		printf("0. Exit\n1. InsertFirst\n2. InsertLast\n3. InsertAny\n");
+		printf("4. DeleteFirst\n5. DeleteLast\n6. DeleteAny\n");
+		printf("===================\n");
+		cout << "User key : ";
+		cin >> key;
+		if (1 == key) {
+			cout << "insert first item : ";
+			cin >> item;
+			insertFirst(root, item);
+			print(root);
+		}
+		else if (2 == key) {
+			cout << "insert last item: ";
+			cin >> item;
+			insertLast(root, item);
+			print(root);
+		}
+		else if (3 == key) {
+			cout << "insert any : ";
+			printf("item:> ");
+			cin >> item;
+			int position;
+			printf("position:> ");
+			cin >> position;
+			insertAny(root, item, position);
+			print(root);
+		}
+		else if (4 == key) {
+			cout << "delete first item: ";
+			deleteFirst(root);
+			print(root);
+		}
+		else if (5 == key) {
+			cout << "delete last item: ";
+			deleteLast(root);
+			print(root);
+		}
+		else if (6 == key) {
+			cout << "delete any item: ";
+			printf("item to be deleted:> ");
+			cin >> item;
+			deleteAny(root, item);
+			print(root);
+		}
+		else {
+			break;
+		}
+	}
+	return 0;
+}
